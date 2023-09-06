@@ -1,10 +1,28 @@
 ;Made by Tp
-;Ê¹ÓÃÇ°ÇëÎñ±ØÔÚÍ¬Ò»¸öÄ¿Â¼ÏÂ½¨Á¢¡¸url.txt¡¹ÎÄµµ£¬²¢ÒÔ¡¸https://api.day.app/xxxxxxxxx/¡¹µÄ¸ñÊ½½«ÍÆËÍÁ´½ÓÕ³Ìù½øÈ¥¡£
+;ä½¿ç”¨å‰è¯·åŠ¡å¿…åœ¨åŒä¸€ä¸ªç›®å½•ä¸‹å»ºç«‹ã€Œurl.txtã€æ–‡æ¡£ï¼Œå¹¶ä»¥ã€Œhttps://api.day.app/xxxxxxxxx/ã€çš„æ ¼å¼å°†æ¨é€é“¾æ¥ç²˜è´´è¿›å»ã€‚
 ^!c::
-FileRead, url, url.txt
-copy := "?automaticallyCopy=1&copy=%clipboard%"
-clipboard = %clipboard%
-finalURL = %url%%clipboard%%copy%
-req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-req.Open("POST", finalURL)
-req.Send()
+{
+	FileRead, url, url.txt
+	copy := "?automaticallyCopy=1&copy=%clipboard%"
+	clipboard = %clipboard%
+	finalURL = %url%%clipboard%%copy%
+	
+	dhw := A_DetectHiddenWindows
+	DetectHiddenWindows On
+	Run "%ComSpec%" /k,, Hide, pid
+	while !(hConsole := WinExist("ahk_pid" pid))
+		Sleep 10
+	DllCall("AttachConsole", "UInt", pid)
+	DetectHiddenWindows %dhw%
+
+	req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	req.Open("POST", finalURL)
+	req.Send()
+	
+
+	DllCall("FreeConsole")
+	Process Exist, %pid%
+	if (ErrorLevel == pid)
+		Process Close, %pid%
+	return
+}
