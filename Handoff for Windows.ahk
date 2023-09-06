@@ -3,9 +3,15 @@
 ^!c::
 {
 	FileRead, url, url.txt
-	copy := "?automaticallyCopy=1&copy=%clipboard%"
-	clipboard = %clipboard%
-	finalURL = %url%%clipboard%%copy%
+	cb = %clipboard%
+	If (InStr(cb,"http://") or InStr(cb,"HTTP://") or InStr(cb,"https://") or InStr(cb,"HTTPS://"))
+	{
+	    copy := "?url=" . cb
+	    cb := "Incoming URL Link"
+	} else {
+		copy := "?automaticallyCopy=1&copy=" . cb
+	}
+	finalURL = %url%%cb%%copy%
 	
 	dhw := A_DetectHiddenWindows
 	DetectHiddenWindows On
@@ -16,7 +22,7 @@
 	DetectHiddenWindows %dhw%
 
 	req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-	req.Open("POST", finalURL)
+	req.Open("GET", finalURL)
 	req.Send()
 	
 
